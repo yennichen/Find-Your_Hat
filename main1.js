@@ -14,8 +14,8 @@ class Field {
     }
 
     print() {
-        for (let i of this.field) {
-            console.log(i.join(''));
+        for (let row of this.field) {
+            console.log(row.join(''));
         }
     }
 
@@ -62,31 +62,19 @@ class Field {
         }
     }
 
-    playGame(height, width, holePercentage) {
-        // Generate field
-        const generatedField = Field.generateField(height, width, holePercentage);
-
-        // Initialize game
-        this.field = generatedField;
-        this.gameOver = false;
-        this.currentRow = 0;
-        this.currentColumn = 0;
-
+    playGame() {
         while (!this.gameOver) {
             console.clear(); // Clear console for better visibility
             this.print();
             this.promptMove();
         }
     }
-    
-    //在這個範例中，我們想要能夠直接從 Field 類別中生成場地，而不需要先建立一個 Field 物件。
-    //因此，將 generateField 方法定義為靜態方法是合適的做法。
-    //這使得我們可以透過 Field.generateField() 直接呼叫這個方法，而不需要先建立 Field 物件。
+
     static generateField(height, width, holePercentage) {
         const totalTiles = height * width;
         const field = new Array(height).fill().map(() => new Array(width).fill(fieldCharacter));
         let numHoles = Math.floor((totalTiles * holePercentage) / 100);
-        
+        field[0][0] = pathCharacter; // Start position
         while (numHoles > 0) {
             const randomRow = Math.floor(Math.random() * height);
             const randomCol = Math.floor(Math.random() * width);
@@ -100,31 +88,13 @@ class Field {
         while (!hatPlaced) {
             const randomRow = Math.floor(Math.random() * height);
             const randomCol = Math.floor(Math.random() * width);
-            //console.log(randomRow,randomCol);
             if (field[randomRow][randomCol] === fieldCharacter) {
                 field[randomRow][randomCol] = hat;
                 hatPlaced = true;
             }
         }
-
-        field[0][0] = pathCharacter; // Start position
-        // Place the starting point randomly
-        /*
-        let startingPlaced = false;
-        while (!startingPlaced) {
-            const randomRow = Math.floor(Math.random() * height);
-            const randomCol = Math.floor(Math.random() * width);
-            //console.log(randomRow,randomCol);
-            if (field[randomRow][randomCol] === fieldCharacter) {
-                field[randomRow][randomCol] = pathCharacter;
-                startingPlaced = true;
-            }
-        } 
-        */
-
         return field;
     }
-
 }
 
 // Example usage
@@ -135,9 +105,5 @@ const generatedField = Field.generateField(fieldHeight, fieldWidth, holePercenta
 console.log(generatedField);
 
 // Initialize game
-//const myField = new Field(generatedField);
-//myField.playGame();
-
-// Initialize game
-const myField = new Field();
-myField.playGame(5, 6, 20);
+const myField = new Field(generatedField);
+myField.playGame();
